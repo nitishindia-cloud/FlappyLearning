@@ -1,19 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>NeuroEvolution : Flappy Bird</title>
-	<link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>FlappyLearning Flight Console</title>
+	<link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<canvas id="flappy" width="500" height="512"></canvas> <br/>
-	<button onclick="speed(60)">x1</button> 
-	<button onclick="speed(120)">x2</button> 
-	<button onclick="speed(180)">x3</button> 
-	<button onclick="speed(300)">x5</button> 
-	<button onclick="speed(0)">MAX</button> 
-	<button id="pause-resume" type="button" disabled>Pause</button>
-	<br/>
-	<a href="http://github.com/xviniette/FlappyLearning">GitHub Repository</a>
+	<main class="console">
+		<header>
+			<p>FlappyLearning</p>
+			<h1>Flight Test Console</h1>
+		</header>
+		<canvas id="flappy" width="500" height="512" aria-label="Neuroevolution flight simulation"></canvas>
+		<div class="controls" role="group" aria-label="Simulation controls">
+			<span>Simulation speed</span>
+			<button onclick="speed(60)">x1</button>
+			<button onclick="speed(120)">x2</button>
+			<button onclick="speed(180)">x3</button>
+			<button onclick="speed(300)">x5</button>
+			<button onclick="speed(0)">MAX</button>
+			<button id="pause-resume" type="button" disabled>Pause</button>
+		</div>
+		<footer><a href="https://github.com/xviniette/FlappyLearning">GitHub Repository</a></footer>
+	</main>
 	<script src = "Neuroevolution.js"></script>
 	<script src = "game.js"></script>
 </body>

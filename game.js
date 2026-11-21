@@ -258,20 +258,20 @@ Game.prototype.isItEnd = function(){
 
 Game.prototype.display = function(){
 	this.ctx.clearRect(0, 0, this.width, this.height);
-	for(var i = 0; i < Math.ceil(this.width / images.background.width) + 1; i++){
-		this.ctx.drawImage(images.background, i * images.background.width - Math.floor(this.backgroundx%images.background.width), 0)
+	var tileWidth = images.background.width;
+	var offset = Math.floor(this.backgroundx % tileWidth);
+	for(var x = -offset; x < this.width; x += tileWidth){
+		this.ctx.drawImage(images.background, x, 0);
 	}
 
 	for(var i in this.pipes){
 		if(i%2 == 0){
 			this.ctx.drawImage(images.pipetop, this.pipes[i].x, this.pipes[i].y + this.pipes[i].height - images.pipetop.height, this.pipes[i].width, images.pipetop.height);
 		}else{
-			this.ctx.drawImage(images.pipebottom, this.pipes[i].x, this.pipes[i].y, this.pipes[i].width, images.pipetop.height);
+			this.ctx.drawImage(images.pipebottom, this.pipes[i].x, this.pipes[i].y, this.pipes[i].width, images.pipebottom.height);
 		}
 	}
 
-	this.ctx.fillStyle = "#FFC600";
-	this.ctx.strokeStyle = "#CE9E00";
 	for(var i in this.birds){
 		if(this.birds[i].alive){
 			this.ctx.save(); 
@@ -282,12 +282,26 @@ Game.prototype.display = function(){
 		}
 	}
 
-	this.ctx.fillStyle = "white";
-	this.ctx.font="20px Oswald, sans-serif";
-	this.ctx.fillText("Score : "+ this.score, 10, 25);
-	this.ctx.fillText("Max Score : "+this.maxScore, 10, 50);
-	this.ctx.fillText("Generation : "+this.generation, 10, 75);
-	this.ctx.fillText("Alive : "+this.alives+" / "+Neuvol.options.population, 10, 100);
+	var labels = ["SCORE", "MAX SCORE", "GENERATION", "ALIVE"];
+	var values = [this.score, this.maxScore, this.generation, this.alives + " / " + Neuvol.options.population];
+	var statWidth = (this.width - 24) / labels.length;
+	this.ctx.fillStyle = "#081522";
+	this.ctx.fillRect(12, 5, this.width - 24, 42);
+	this.ctx.strokeStyle = "#31546b";
+	this.ctx.strokeRect(12.5, 5.5, this.width - 25, 41);
+	for(var i = 0; i < labels.length; i++){
+		var statX = 12 + i * statWidth;
+		if(i > 0){
+			this.ctx.fillStyle = "#31546b";
+			this.ctx.fillRect(Math.floor(statX), 13, 1, 26);
+		}
+		this.ctx.fillStyle = "#a4bfd3";
+		this.ctx.font = "bold 12px monospace";
+		this.ctx.fillText(labels[i], statX + 12, 20);
+		this.ctx.fillStyle = "#edfaff";
+		this.ctx.font = "bold 20px monospace";
+		this.ctx.fillText(values[i], statX + 12, 40, statWidth - 24);
+	}
 
 	var self = this;
 	requestAnimationFrame(function(){
