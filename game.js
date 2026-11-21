@@ -28,9 +28,38 @@ var FPS = 60;
 var maxScore=0;
 
 var images = {};
+var paused = false;
+var pendingUpdate = null;
+
+var scheduleUpdate = function(){
+	if(paused || pendingUpdate){
+		return;
+	}
+
+	var update = function(){
+		// A queued MAX callback can still arrive after a pause or speed change.
+		if(pendingUpdate !== update){
+			return;
+		}
+		pendingUpdate = null;
+		game.update();
+		scheduleUpdate();
+	};
+
+	pendingUpdate = update;
+	if(FPS == 0){
+		setZeroTimeout(update);
+	}else{
+		setTimeout(update, 1000/FPS);
+	}
+}
 
 var speed = function(fps){
 	FPS = parseInt(fps);
+	if(game){
+		pendingUpdate = null;
+		scheduleUpdate();
+	}
 }
 
 var loadImages = function(sources, callback){
@@ -215,17 +244,6 @@ Game.prototype.update = function(){
 
 	this.score++;
 	this.maxScore = (this.score > this.maxScore) ? this.score : this.maxScore;
-	var self = this;
-
-	if(FPS == 0){
-		setZeroTimeout(function(){
-			self.update();
-		});
-	}else{
-		setTimeout(function(){
-			self.update();
-		}, 1000/FPS);
-	}
 }
 
 
@@ -293,7 +311,17 @@ window.onload = function(){
 		game = new Game();
 		game.start();
 		game.update();
+		scheduleUpdate();
 		game.display();
+
+		var pauseButton = document.querySelector("#pause-resume");
+		pauseButton.onclick = function(){
+			paused = !paused;
+			pendingUpdate = null;
+			pauseButton.textContent = paused ? "Resume" : "Pause";
+			scheduleUpdate();
+		};
+		pauseButton.disabled = false;
 	}
 
 
