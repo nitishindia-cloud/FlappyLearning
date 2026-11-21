@@ -155,6 +155,7 @@ var Game = function(){
 	this.birds = [];
 	this.score = 0;
 	this.canvas = document.querySelector("#flappy");
+	this.telemetry = document.querySelectorAll(".telemetry dd");
 	this.ctx = this.canvas.getContext("2d");
 	this.width = this.canvas.width;
 	this.height = this.canvas.height;
@@ -282,25 +283,12 @@ Game.prototype.display = function(){
 		}
 	}
 
-	var labels = ["SCORE", "MAX SCORE", "GENERATION", "ALIVE"];
 	var values = [this.score, this.maxScore, this.generation, this.alives + " / " + Neuvol.options.population];
-	var statWidth = (this.width - 24) / labels.length;
-	this.ctx.fillStyle = "#081522";
-	this.ctx.fillRect(12, 5, this.width - 24, 42);
-	this.ctx.strokeStyle = "#31546b";
-	this.ctx.strokeRect(12.5, 5.5, this.width - 25, 41);
-	for(var i = 0; i < labels.length; i++){
-		var statX = 12 + i * statWidth;
-		if(i > 0){
-			this.ctx.fillStyle = "#31546b";
-			this.ctx.fillRect(Math.floor(statX), 13, 1, 26);
+	for(var i = 0; i < this.telemetry.length; i++){
+		var value = String(values[i]);
+		if(this.telemetry[i].textContent !== value){
+			this.telemetry[i].textContent = value;
 		}
-		this.ctx.fillStyle = "#a4bfd3";
-		this.ctx.font = "bold 12px monospace";
-		this.ctx.fillText(labels[i], statX + 12, 20);
-		this.ctx.fillStyle = "#edfaff";
-		this.ctx.font = "bold 20px monospace";
-		this.ctx.fillText(values[i], statX + 12, 40, statWidth - 24);
 	}
 
 	var self = this;

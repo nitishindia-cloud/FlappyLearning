@@ -40,6 +40,30 @@ body {
 	line-height: 1.15;
 }
 
+.telemetry {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 8px;
+	margin: 0 0 8px;
+	padding: 8px;
+	border: 1px solid #31546b;
+	background: #081522;
+	font-family: monospace;
+}
+
+.telemetry dt {
+	color: #a7c7da;
+	font-size: 11px;
+	text-transform: uppercase;
+}
+
+.telemetry dd {
+	margin: 3px 0 0;
+	font-size: clamp(12px, 3vw, 20px);
+	font-weight: bold;
+	overflow-wrap: anywhere;
+}
+
 #flappy {
 	display: block;
 	width: 100%;
