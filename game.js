@@ -28,9 +28,38 @@ var FPS = 60;
 var maxScore=0;
 
 var images = {};
+var paused = false;
+var pendingUpdate = null;
+
+var scheduleUpdate = function(){
+	if(paused || pendingUpdate){
+		return;
+	}
+
+	var update = function(){
+		// A queued MAX callback can still arrive after a pause or speed change.
+		if(pendingUpdate !== update){
+			return;
+		}
+		pendingUpdate = null;
+		game.update();
+		scheduleUpdate();
+	};
+
+	pendingUpdate = update;
+	if(FPS == 0){
+		setZeroTimeout(update);
+	}else{
+		setTimeout(update, 1000/FPS);
+	}
+}
 
 var speed = function(fps){
 	FPS = parseInt(fps);
+	if(game){
+		pendingUpdate = null;
+		scheduleUpdate();
+	}
 }
 
 var loadImages = function(sources, callback){
@@ -126,6 +155,7 @@ var Game = function(){
 	this.birds = [];
 	this.score = 0;
 	this.canvas = document.querySelector("#flappy");
+	this.telemetry = document.querySelectorAll(".telemetry dd");
 	this.ctx = this.canvas.getContext("2d");
 	this.width = this.canvas.width;
 	this.height = this.canvas.height;
@@ -215,17 +245,6 @@ Game.prototype.update = function(){
 
 	this.score++;
 	this.maxScore = (this.score > this.maxScore) ? this.score : this.maxScore;
-	var self = this;
-
-	if(FPS == 0){
-		setZeroTimeout(function(){
-			self.update();
-		});
-	}else{
-		setTimeout(function(){
-			self.update();
-		}, 1000/FPS);
-	}
 }
 
 
@@ -240,20 +259,20 @@ Game.prototype.isItEnd = function(){
 
 Game.prototype.display = function(){
 	this.ctx.clearRect(0, 0, this.width, this.height);
-	for(var i = 0; i < Math.ceil(this.width / images.background.width) + 1; i++){
-		this.ctx.drawImage(images.background, i * images.background.width - Math.floor(this.backgroundx%images.background.width), 0)
+	var tileWidth = images.background.width;
+	var offset = Math.floor(this.backgroundx % tileWidth);
+	for(var x = -offset; x < this.width; x += tileWidth){
+		this.ctx.drawImage(images.background, x, 0);
 	}
 
 	for(var i in this.pipes){
 		if(i%2 == 0){
 			this.ctx.drawImage(images.pipetop, this.pipes[i].x, this.pipes[i].y + this.pipes[i].height - images.pipetop.height, this.pipes[i].width, images.pipetop.height);
 		}else{
-			this.ctx.drawImage(images.pipebottom, this.pipes[i].x, this.pipes[i].y, this.pipes[i].width, images.pipetop.height);
+			this.ctx.drawImage(images.pipebottom, this.pipes[i].x, this.pipes[i].y, this.pipes[i].width, images.pipebottom.height);
 		}
 	}
 
-	this.ctx.fillStyle = "#FFC600";
-	this.ctx.strokeStyle = "#CE9E00";
 	for(var i in this.birds){
 		if(this.birds[i].alive){
 			this.ctx.save(); 
@@ -264,12 +283,13 @@ Game.prototype.display = function(){
 		}
 	}
 
-	this.ctx.fillStyle = "white";
-	this.ctx.font="20px Oswald, sans-serif";
-	this.ctx.fillText("Score : "+ this.score, 10, 25);
-	this.ctx.fillText("Max Score : "+this.maxScore, 10, 50);
-	this.ctx.fillText("Generation : "+this.generation, 10, 75);
-	this.ctx.fillText("Alive : "+this.alives+" / "+Neuvol.options.population, 10, 100);
+	var values = [this.score, this.maxScore, this.generation, this.alives + " / " + Neuvol.options.population];
+	for(var i = 0; i < this.telemetry.length; i++){
+		var value = String(values[i]);
+		if(this.telemetry[i].textContent !== value){
+			this.telemetry[i].textContent = value;
+		}
+	}
 
 	var self = this;
 	requestAnimationFrame(function(){
@@ -293,7 +313,17 @@ window.onload = function(){
 		game = new Game();
 		game.start();
 		game.update();
+		scheduleUpdate();
 		game.display();
+
+		var pauseButton = document.querySelector("#pause-resume");
+		pauseButton.onclick = function(){
+			paused = !paused;
+			pendingUpdate = null;
+			pauseButton.textContent = paused ? "Resume" : "Pause";
+			scheduleUpdate();
+		};
+		pauseButton.disabled = false;
 	}
 
 
