@@ -1,0 +1,122 @@
+:root {
+	color-scheme: dark;
+	font-family: system-ui, sans-serif;
+	color: #edfaff;
+	background: #050b15;
+	--focus: #64ebff;
+}
+
+body {
+	margin: 0;
+	padding: clamp(12px, 4vw, 40px);
+	background: radial-gradient(ellipse at top, #142d43, #050b15 72%);
+	min-height: 100vh;
+	box-sizing: border-box;
+}
+
+.console {
+	max-width: 500px;
+	margin: auto;
+	padding: clamp(10px, 3vw, 20px);
+	border: 1px solid #31546b;
+	border-top: 2px solid var(--focus);
+	border-radius: 12px;
+	background: #0a1624;
+	box-shadow: 0 20px 64px #0008;
+}
+
+.console header p,
+.controls span {
+	margin: 0;
+	color: #a7c7da;
+	font: bold 12px monospace;
+	letter-spacing: .12em;
+	text-transform: uppercase;
+}
+
+.console h1 {
+	margin: 4px 0 16px;
+	font-size: clamp(23px, 5vw, 32px);
+	line-height: 1.15;
+}
+
+.telemetry {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 8px;
+	margin: 0 0 8px;
+	padding: 8px;
+	border: 1px solid #31546b;
+	background: #081522;
+	font-family: monospace;
+}
+
+.telemetry dt {
+	color: #a7c7da;
+	font-size: 11px;
+	text-transform: uppercase;
+}
+
+.telemetry dd {
+	margin: 3px 0 0;
+	font-size: clamp(12px, 3vw, 20px);
+	font-weight: bold;
+	overflow-wrap: anywhere;
+}
+
+#flappy {
+	display: block;
+	width: 100%;
+	height: auto;
+	outline: 1px solid #31546b;
+	background: #071426;
+}
+
+.controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin-top: 16px;
+}
+
+.controls span {
+	margin-right: auto;
+}
+
+button {
+	min-width: 44px;
+	min-height: 44px;
+	padding: 0 12px;
+	border: 1px solid #4a718a;
+	border-radius: 5px;
+	background: #132b40;
+	color: inherit;
+	font: bold 14px monospace;
+	cursor: pointer;
+}
+
+button:hover {
+	border-color: var(--focus);
+	background: #1b3d53;
+}
+
+button:active {
+	background: #244b62;
+}
+
+button:focus-visible,
+a:focus-visible {
+	outline: 2px solid var(--focus);
+	outline-offset: 3px;
+}
+
+footer {
+	margin-top: 16px;
+	font-size: 13px;
+}
+
+footer a {
+	color: #a7c7da;
+	text-underline-offset: 3px;
+}
